@@ -157,7 +157,27 @@ diamond blastx \
         > ~/scratch/btk_tutorial/ref_euk.diamond.blastx.part_${SEQUENCE}.out
 ```
 
+#### Now add cov data
+```
+#!/bin/bash
 
+#SBATCH --time=0:10:00
+#SBATCH --mem=24G #default is 1 core with 2.8GB of memory
+#SBATCH -n 16
+#SBATCH --account=epscor-condo
+
+# Specify a job name:
+#SBATCH -J get_coverage_bam_files
+
+#----- End of slurm commands ----
+
+ASSEMBLY=~/scratch/btk_tutorial/files/ref_euk.fa
+FQ1=~/scratch/btk_tutorial/files/fastqs/lib11_R1_P.fq.gz
+FQ2=~/scratch/btk_tutorial/files/fastqs/lib11_R2_P.fq.gz
+
+#run minimap to get bam files, sort with samtools
+minimap2 -ax sr -t 16 $ASSEMBLY $FQ1 $FQ2 | samtools sort -@16 -O BAM -o ~/scratch/btk_tutorial/files/ref_euk.bam -
+```
 
 
 
