@@ -157,7 +157,7 @@ diamond blastx \
         > ~/scratch/btk_tutorial/ref_euk.diamond.blastx.part_${SEQUENCE}.out
 ```
 
-#### Now add cov data
+#### Now make cov data
 ```
 #!/bin/bash
 
@@ -179,10 +179,13 @@ FQ2=~/scratch/btk_tutorial/files/fastqs/lib11_R2_P.fq.gz
 minimap2 -ax sr -t 16 $ASSEMBLY $FQ1 $FQ2 | samtools sort -@16 -O BAM -o ~/scratch/btk_tutorial/files/ref_euk.bam -
 ```
 
-
-
-
-
+#### Now make cov data
+```
+~/data/ibishop/blobtoolkit/blobtools2/blobtools add \
+    --cov ~/scratch/btk_tutorial/files/ref_euk.bam \
+    --replace \
+    ~/scratch/btk_tutorial/datasets/ref_euk
+```
 
 
 
