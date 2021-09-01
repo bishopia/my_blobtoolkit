@@ -6,6 +6,10 @@ Be sure to add the following requirements via pip in the main blobtools director
 ```
 python -m pip install -r requirements.txt
 ```
+Also install minimap and samtools
+```
+mamba install -c conda-forge minimap2 samtools
+```
 
 ## create dataset
 
@@ -101,8 +105,9 @@ cat out_split/*.out > blastn_nt_resuls.out
 
 #### Now add to blobdir database
 ```
-~/blobtoolkit/blobtools2/blobtools add \
+~/data/ibishop/blobtoolkit/blobtools2/blobtools add \
     --hits ~/scratch/bkt_tutorial/files/blastn_nt_results.out \
+    --hits-cols 1=qseqid,2=staxids,3=bitscore,5=sseqid,12=sstart,13=send,14=evalue \
     --taxrule bestsumorder \
     --taxdump ~/data/ibishop/blobtoolkit/taxdump \
     ~/scratch/btk_tutorial/datasets/ref_euk
