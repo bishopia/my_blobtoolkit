@@ -58,27 +58,98 @@ seqkit split2 -p $SPLIT_NUM $REF
 ```
 
 
-## add files
+## Adding files
 
-first, blast hits:
+#### First, blast hits:
 ```
-#you may have to remove leading zeroes in sequence to make batch work
-blastn -db nt \
-       -query ref_euk.part_${ID}.fa \
-       -outfmt "6 qseqid staxids bitscore std" \
-       -max_target_seqs 10 \
-       -max_hsps 1 \
-       -evalue 1e-25 \
-       -num_threads 16 \
-       -out ref_euk.ncbi.blastn.part_${ID}.out"
-       
-       blastn -db $NT_DIR/nt \
-       -query $CONTIG_DIR/contig_split_${ID}.fa \
-       -out $OUTPUT_DIR/fin${ID}.out \
-       -evalue 1e-6 \
-       -max_hsps 1\
-       -outfmt "6 qseqid staxids bitscore std" \
-       -max_target_seqs 10
-       
-cat ref_euk.ncbi.blastn.part_*.out > ref_euk.blastn.out
+#!/bin/bash
+
+#SBATCH --time=0:30:00
+#SBATCH --mem=4G #default is 1 core with 2.8GB of memory
+#SBATCH -n 1
+#SBATCH --account=epscor-condo
+#SBATCH --array=1-500
+##SBATCH --array=1-2
+
+ID=$SLURM_ARRAY_TASK_ID
+SEQUENCE=$(printf "%03d" ${ID})
+
+# Specify a job name:
+#SBATCH -J blastn_ref_euk
+
+#----- End of slurm commands ----
+
+#load modules
+module load blast/2.9.0+
+
+#run blastn
+blastn -db ~/data/ibishop/blobtoolkit/nt/nt \
+	-query ~/scratch/btk_tutorial/files/ref_euk.fa.split/ref_euk.part_${SEQUENCE}.fa \
+	-outfmt "6 qseqid staxids bitscore std" \
+	-max_target_seqs 10 \
+	-max_hsps 1 \
+	-evalue 1e-25 \
+	-num_threads 1 \
+	-out ~/scratch/btk_tutorial/files/out_split/ref_euk.ncbi.blastn.part_${SEQUENCE}.out
 ```
+
+#### Then combine split results
+```
+cd $WORKDIR/files
+cat out_split/*.out > blastn_nt_resuls.out
+```
+
+#### Now do diamond blast
+```
+#!/bin/bash
+
+#SBATCH --time=1:00:00
+#SBATCH --mem=8G #default is 1 core with 2.8GB of memory
+#SBATCH -n 16
+#SBATCH --account=epscor-condo
+##SBATCH --array=1-500
+#SBATCH --array=1-2
+
+ID=$SLURM_ARRAY_TASK_ID
+SEQUENCE=$(printf "%03d" ${ID})
+
+# Specify a job name:
+#SBATCH -J diamond_ref_euk
+
+#----- End of slurm commands ----
+
+#load modules
+module load diamond
+
+#run blastn
+#blastn -db ~/data/ibishop/blobtoolkit/nt/nt \
+#	-query ~/scratch/btk_tutorial/files/ref_euk.fa.split/ref_euk.part_${SEQUENCE}.fa \
+#	-outfmt "6 qseqid staxids bitscore std" \
+#	-max_target_seqs 10 \
+#	-max_hsps 1 \
+#	-evalue 1e-25 \
+#	-num_threads 1 \
+#	-out ~/scratch/btk_tutorial/files/out_split/ref_euk.ncbi.blastn.part_${SEQUENCE}.out
+    
+diamond blastx \
+        --query ~/scratch/btk_tutorial/files/ref_euk.fa.split/ref_euk.part_${SEQUENCE}.fa \
+        #--db /path/to/uniprot.db.with.taxids \
+        --db ~/data/ibishop/blobtoolkit/uniprot \
+        --outfmt 6 qseqid staxids bitscore qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore \
+        --sensitive \
+        --max-target-seqs 1 \
+        --evalue 1e-25 \
+        --threads 16 \
+        > ~/scratch/btk_tutorial/ref_euk.diamond.blastx.part_${SEQUENCE}.out
+```
+
+
+
+
+
+
+
+
+
+
+
