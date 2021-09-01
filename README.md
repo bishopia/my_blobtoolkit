@@ -106,7 +106,7 @@ cat out_split/*.out > blastn_nt_resuls.out
     --taxrule bestsumorder \
     --taxdump ~/data/ibishop/blobtoolkit/taxdump \
     ~/scratch/btk_tutorial/datasets/ref_euk
-    ```
+```
 
 #### Now do diamond blast
 ```
