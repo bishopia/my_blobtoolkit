@@ -2,13 +2,13 @@
 install and use of btk on ccv
 
 ## Install instructions
-####Set up conda environment
+#### Set up conda environment
 ```
 #create btk_env conda environment
 mamba create --prefix /gpfs/home/ibishop/data/ibishop/condas/btk_env
 ```
 
-####Activate btk_env and install software
+#### Activate btk_env and install software
 ```
 conda activate /gpfs/home/ibishop/data/ibishop/condas/btk_env
 mamba install -c conda-forge -y python=3.6 docopt psutil pyyaml ujson tqdm nodejs=10 yq
@@ -17,7 +17,7 @@ mamba install -c conda-forge -y geckodriver selenium pyvirtualdisplay;
 mamba install -c conda-forge minimap2 samtools
 ```
 
-####Go find directory to place git repo in, clone repos for toolkit
+#### Go find directory to place git repo in, clone repos for toolkit
 ```
 cd ~/data/ibishop
 mkdir -p ~/blobtoolkit
