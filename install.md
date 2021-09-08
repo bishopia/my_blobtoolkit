@@ -3,7 +3,7 @@ install blobtoolkit, including conda environment, github repos and all required 
 
 ## Install instructions
 #### Set up conda environment
-Here I am using a local installation of miniconda rather than the anaconda module available via HPC
+Here I am using a local installation of miniconda rather than the anaconda module available via HPC. make sure that mamba is installed in your base environment
 ```
 #create btk_env conda environment
 mamba create --prefix /gpfs/home/ibishop/data/ibishop/condas/btk_env
