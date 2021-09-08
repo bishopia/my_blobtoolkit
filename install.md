@@ -94,5 +94,7 @@ wget -q -O stramenopiles_odb10.gz "https://busco-data.ezlab.org/v4/data/lineages
 ```
 
 ##### Deactivate environment and log out
+```
 conda activate
 exit
+```
