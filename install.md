@@ -1,8 +1,9 @@
 # my_blobtoolkit
-install and use of btk on ccv
+install blobtoolkit, including conda environment, github repos and all required dependencies for implementation.
 
 ## Install instructions
 #### Set up conda environment
+Here I am using a local installation of miniconda rather than the anaconda module available via HPC
 ```
 #create btk_env conda environment
 mamba create --prefix /gpfs/home/ibishop/data/ibishop/condas/btk_env
