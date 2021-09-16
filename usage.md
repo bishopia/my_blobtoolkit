@@ -111,7 +111,7 @@ cat out_split/*.out > blastn_nt_resuls.out
 #!/bin/bash
 
 #SBATCH --time=1:00:00
-#SBATCH --mem=8G #default is 1 core with 2.8GB of memory
+#SBATCH --mem=20G #default is 1 core with 2.8GB of memory
 #SBATCH -n 16
 #SBATCH --account=epscor-condo
 ##SBATCH --array=1-500
@@ -149,6 +149,31 @@ diamond blastx \
         --threads 16 \
         > ~/scratch/btk_tutorial/ref_euk.diamond.blastx.part_${SEQUENCE}.out
 ```
+
+#### Then combine split results
+```
+cd $WORKDIR/files
+cat out_split_diamond/*.out > diamond_uniprot_results.out
+```
+
+#### Now add to blobdir database
+```
+~/data/ibishop/blobtoolkit/blobtools2/blobtools add \
+    --hits ~/scratch/bkt_tutorial/files/diamond_uniprot_results.out \
+    --hits-cols 1=qseqid,2=staxids,3=bitscore,5=sseqid,12=qstart,13=qend,14=evalue \
+    --taxrule bestsumorder \
+    --taxdump ~/data/ibishop/blobtoolkit/taxdump \
+    ~/scratch/btk_tutorial/datasets/ref_euk
+    
+~/data/ibishop/blobtoolkit/blobtools2/blobtools add \
+    --hits ~/scratch/bkt_tutorial/files/diamond_uniprot_results.out \
+    --hits-cols 1=qseqid,2=staxids,3=bitscore,4=qseqid,5=sseqid,6=pident,7=length,8=mismatch,9=gapopen,10=qstart,11=qend,12=sstart,13=send,14=evalue,15=bitscore \
+    --taxrule bestsumorder \
+    --taxdump ~/data/ibishop/blobtoolkit/taxdump \
+    ~/scratch/btk_tutorial/datasets/ref_euk
+```
+
+
 
 #### Now make cov data
 ```
