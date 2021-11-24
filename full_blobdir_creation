@@ -1,0 +1,70 @@
+
+
+#script
+
+#create blobdb
+singularity exec --no-home -B $PWD:/mnt blobtoolkit.sif /blobtoolkit/blobtools2/blobtools create \
+    --fasta /mnt/mfa1red2.fa \
+    --taxid 265556 \
+    --taxdump /blobtoolkit/databases/ncbi_taxdump \
+    /mnt/blob_mfa1red2
+
+#add busco
+singularity exec --no-home -B $PWD:/mnt blobtoolkit.sif /blobtoolkit/blobtools2/blobtools add \
+    --busco /mnt/mfa1red2_busco_full_table.tsv \
+    /mnt/blob_mfa1red2
+
+#add coverage
+singularity exec --no-home -B $PWD:/mnt blobtoolkit.sif /blobtoolkit/blobtools2/blobtools add \
+    --cov /mnt/bamming/aln.bam \
+    --threads 2 \
+    /mnt/blob_mfa1red2
+
+#add nt blastn
+singularity exec --no-home -B $PWD:/mnt blobtoolkit.sif /blobtoolkit/blobtools2/blobtools add \
+    --hits /mnt/blastn_nt_1e6_output/mfa1red2_blastn_nt_1e6.out \
+    --taxrule bestsumorder \
+    --taxdump /blobtoolkit/databases/ncbi_taxdump \
+    /mnt/blob_mfa1red2
+
+#add bertax classfication
+singularity exec --no-home -B $PWD:/mnt blobtoolkit.sif /blobtoolkit/blobtools2/blobtools add \
+    --text /mnt/bertax/bertax_hits.csv \
+    --text-delimiter ',' \
+    --text-cols id=identifiers,sk=bertax_sk,sk_percent=bertax_sk_percent \
+    --text-header \
+    /mnt/blob_mfa1red2
+
+#add TARA oceans
+singularity exec --no-home -B $PWD:/mnt blobtoolkit.sif /blobtoolkit/blobtools2/blobtools add \
+    --text /mnt/diamond_TARA_SMAG_1e6_output/all_tara_SMAG_aa2.csv \
+    --text-delimiter ',' \
+    --text-cols id=identifiers,pident=tara_pident,evalue=tara_evalue,bitscore=tara_bitscore \
+    --text-header \
+    /mnt/blob_mfa1red2
+
+#add RepeatModeler_rount5 consensus repeat familes blastn
+#you need to run sed 1d, save the copy without header, then go back and add in with quotes with vim after.
+singularity exec --no-home -B $PWD:/mnt blobtoolkit.sif /blobtoolkit/blobtools2/blobtools add \
+    --text /mnt/blastn_repmod_round5_1e6_output/blastn_repmodround5_output.csv \
+    --text-delimiter ',' \
+    --text-cols id=identifiers,bitscore=rep_bitscore,pident=rep_pident,length=rep_length,evalue=rep_evalue \
+    --text-header \
+    /mnt/blob_mfa1red2
+
+
+
+#add phycocosm protein diamond blastx -FIX/FINISH
+singularity exec --no-home -B $PWD:/mnt blobtoolkit.sif /blobtoolkit/blobtools2/blobtools add \
+    --text /mnt/diamond_phycocosm_proteins_1e6_output/all_phycoprot_diamond.csv \
+    --text-delimiter ',' \
+    --text-cols id=identifiers,evalue=evalue,bitscore=bitscore \
+    --text-header \
+    /mnt/mfa1red2_real
+    
+    
+    
+    
+#and now run on local machine
+conda activate /Users/iwbishop/miniconda3/envs/btk
+/Users/iwbishop/blobtoolkit/blobtools2/blobtools view --remote mfa1red2_real/
